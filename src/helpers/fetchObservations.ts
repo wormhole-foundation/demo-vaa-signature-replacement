@@ -7,9 +7,9 @@ import axios from 'axios';
  */
 export async function fetchObservations(vaaId: string) {
 	try {
-		console.log(`🛠 Fetching observations for: ${vaaId}`);
+		console.log(`🛠  Fetching observations`);
 		const response = await axios.get(`https://api.wormholescan.io/api/v1/observations/${vaaId}`);
-		// console.log('✅ Observations fetched:', response.data);
+
 		return response.data.map((obs: any) => ({
 			guardianAddr: obs.guardianAddr.toLowerCase(),
 			signature: obs.signature,
