@@ -30,5 +30,6 @@ export async function fetchVaaIds(txHashes: string[]): Promise<string[]> {
 		}
 	}
 
+	console.log('VAA IDs: ', vaaIds);
 	return vaaIds;
 }
