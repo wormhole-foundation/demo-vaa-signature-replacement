@@ -81,7 +81,6 @@ export async function replaceSignatures(
 			throw new Error('No valid replacement signature found (must have v = 0 or 1).');
 
 		updatedSignatures.push(validReplacement);
-		console.log('✅ Successfully replaced outdated signature:', validReplacement);
 
 		// Step 8: Sort signatures
 		updatedSignatures.sort((a, b) => a.guardianIndex - b.guardianIndex);
@@ -105,7 +104,7 @@ export async function replaceSignatures(
 
 			const vaaHex = `0x${Buffer.from(patchedVaa).toString('hex')}`;
 
-			console.log('🔍 Sending updated VAA to RPC...');
+			console.log('Sending updated VAA to RPC...');
 
 			const result = await axios.post(RPC, {
 				jsonrpc: '2.0',
@@ -121,9 +120,12 @@ export async function replaceSignatures(
 				],
 			});
 
-			console.log(`Updated VAA: 0x${Buffer.from(patchedVaa).toString('hex')}`);
-			console.log('📡 Full RPC Response:', JSON.stringify(result.data, null, 2));
-			console.log(`Verification Result: ${result.data.result}`);
+			const rpcResponse = JSON.stringify(result.data, null, 2);
+			const verificationResult = result.data.result;
+			// console.log(`Updated VAA: 0x${Buffer.from(patchedVaa).toString('hex')}`);
+			// console.log('📡 Full RPC Response:', JSON.stringify(result.data, null, 2));
+			// console.log(`Verification Result: ${result.data.result}`);
+			return verificationResult;
 		} catch (error) {
 			throw new Error(`Error sending updated VAA to RPC: ${error}`);
 		}
