@@ -5,32 +5,17 @@ import axios from 'axios';
  * @param {string} vaaId - The VAA ID in format "chain/emitter/sequence"
  * @returns {Promise<any[]>} - Returns an array of formatted signatures
  */
-export async function fetchObservations(vaaId: string): Promise<any[]> {
+export async function fetchObservations(vaaId: string) {
 	try {
-		console.log(`🛠 Fetching observations for VAA ID: ${vaaId}`);
-
+		console.log(`🛠 Fetching observations for: ${vaaId}`);
 		const response = await axios.get(`https://api.wormholescan.io/api/v1/observations/${vaaId}`);
-		const data: any[] = response.data;
-
-		// Decode signatures
-		const sigs = data.map((d) => {
-			const signatureBuffer = Buffer.from(d.signature, 'base64'); // Convert base64 to bytes
-			const r = BigInt('0x' + signatureBuffer.subarray(0, 32).toString('hex')); // Extract r
-			const s = BigInt('0x' + signatureBuffer.subarray(32, 64).toString('hex')); // Extract s
-			const v = signatureBuffer[64]; // Extract v (1 byte)
-
-			return {
-				guardianAddr: d.guardianAddr.toLowerCase(),
-				r: r.toString(),
-				s: s.toString(),
-				v,
-			};
-		});
-
-		console.log(`✅ Decoded Signatures for ${vaaId}:`, JSON.stringify(sigs, null, 2));
-		return sigs;
+		// console.log('✅ Observations fetched:', response.data);
+		return response.data.map((obs: any) => ({
+			guardianAddr: obs.guardianAddr.toLowerCase(),
+			signature: obs.signature,
+		}));
 	} catch (error) {
-		console.error(`❌ Error fetching observations for ${vaaId}:`, error);
+		console.error(`❌ Error fetching observations:`, error);
 		return [];
 	}
 }
