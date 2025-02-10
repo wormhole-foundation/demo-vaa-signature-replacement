@@ -25,6 +25,9 @@ export async function checkVaaValidity(vaaBytes: string) {
 		).data.result;
 
 		const decoded = eth.abi.decodeParameters(PARSE_AND_VERIFY_VM_ABI.outputs, result);
+		console.log(
+			`${decoded.valid ? '✅' : '❌'} VAA Valid: ${decoded.valid}, Reason: ${decoded.reason}`
+		);
 		return { valid: decoded.valid, reason: decoded.reason };
 	} catch (error) {
 		console.error(`❌ Error checking VAA validity:`, error);
