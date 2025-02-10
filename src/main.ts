@@ -49,17 +49,15 @@ async function main() {
 			return;
 		}
 
-		console.log('HERE ARE THE VAA BYTES: ', vaaBytes);
-
 		console.log('🔄 Replacing Signatures...');
 		const patchedVaa = await replaceSignatures(
-			vaaBytes,
+			Buffer.from(vaaBytes, 'base64'),
 			observations,
 			currentGuardians,
 			guardianSetIndex
 		);
-		console.log('✅ Signature Replacement Completed.');
-		console.log('Patched VAA: ', patchedVaa);
+		// console.log('✅ Signature Replacement Completed.');
+		// console.log('Patched VAA: ', patchedVaa);
 	}
 }
 
