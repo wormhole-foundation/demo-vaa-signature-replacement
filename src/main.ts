@@ -11,18 +11,16 @@ import {
 const TXS = ['0x3ad91ec530187bb2ce3b394d587878cd1e9e037a97e51fbc34af89b2e0719367'];
 
 async function main() {
-	console.log('🔍 Fetching VAA IDs...');
+	// 1. Fetch Transaction VAA IDs:
 	const vaaIds = await fetchVaaIds(TXS);
-	console.log('✅ VAA IDs:', vaaIds);
 
 	if (vaaIds.length === 0) {
 		console.error('🚨 No VAA IDs found. Exiting.');
 		return;
 	}
 
-	console.log('🔍 Fetching VAA Data...');
+	// 2. Fetch VAA Data:
 	const vaaData = await fetchVaaData(vaaIds);
-	console.log('✅ VAA Data:', vaaData);
 
 	if (vaaData.length === 0) {
 		console.error('🚨 No VAA data found. Exiting.');
@@ -31,33 +29,29 @@ async function main() {
 
 	const vaaBytes = vaaData[0].vaaBytes;
 
-	console.log('🔍 Checking VAA Validity...');
-	const { valid, reason } = await checkVaaValidity(vaaBytes);
-	console.log(`✅ VAA Valid: ${valid}, Reason: ${reason}`);
+	// 3. Check VAA Validity:
+	const { valid } = await checkVaaValidity(vaaBytes);
 
+	// If VAA is not valid:
 	if (!valid) {
-		console.log('🔍 Fetching Observations...');
+		// 4. Fetch Observations (VAA signatures):
 		const observations = await fetchObservations(vaaIds[0]); // Pass the first VAA ID
-		console.log('✅ Observations:', observations);
 
-		console.log('🔍 Fetching Guardian Set...');
+		// 5. Fetch Current Guardian Set:
 		const [currentGuardians, guardianSetIndex] = await fetchGuardianSet();
-		console.log('✅ Guardian Set:', currentGuardians);
 
 		if (!vaaBytes) {
 			console.error('🚨 Error: VAA bytes are undefined.');
 			return;
 		}
 
-		console.log('🔄 Replacing Signatures...');
+		// 6. Replace Signatures:
 		const patchedVaa = await replaceSignatures(
 			Buffer.from(vaaBytes, 'base64'),
 			observations,
 			currentGuardians,
 			guardianSetIndex
 		);
-		// console.log('✅ Signature Replacement Completed.');
-		// console.log('Patched VAA: ', patchedVaa);
 	}
 }
 
