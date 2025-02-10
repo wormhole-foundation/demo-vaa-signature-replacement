@@ -36,3 +36,33 @@ export const PARSE_AND_VERIFY_VM_ABI = {
 	stateMutability: 'view',
 	type: 'function',
 };
+
+export const OUTPUT_TYPES = [
+	{
+		type: 'tuple',
+		components: [
+			{ type: 'uint8', name: 'version' },
+			{ type: 'uint32', name: 'timestamp' },
+			{ type: 'uint32', name: 'nonce' },
+			{ type: 'uint16', name: 'emitterChainId' },
+			{ type: 'bytes32', name: 'emitterAddress' },
+			{ type: 'uint64', name: 'sequence' },
+			{ type: 'uint8', name: 'consistencyLevel' },
+			{ type: 'bytes', name: 'payload' },
+			{ type: 'uint32', name: 'guardianSetIndex' },
+			{
+				type: 'tuple[]',
+				name: 'signatures',
+				components: [
+					{ type: 'bytes32', name: 'r' },
+					{ type: 'bytes32', name: 's' },
+					{ type: 'uint8', name: 'v' },
+					{ type: 'uint8', name: 'guardianIndex' },
+				],
+			},
+			{ type: 'bytes32', name: 'hash' },
+		],
+	},
+	{ type: 'bool', name: 'valid' },
+	{ type: 'string', name: 'reason' },
+];
