@@ -6,44 +6,35 @@ import {
 	fetchGuardianSet,
 	replaceSignatures,
 } from './helpers';
-
-// Example transaction hashes to check
-const TXS = ['0x3ad91ec530187bb2ce3b394d587878cd1e9e037a97e51fbc34af89b2e0719367'];
+import { TXS } from './config';
 
 async function main() {
-	// 1. Fetch Transaction VAA IDs:
-	const vaaIds = await fetchVaaIds(TXS);
+	try {
+		// 1. Fetch Transaction VAA IDs:
+		const vaaIds = await fetchVaaIds(TXS);
+		if (vaaIds.length === 0) throw new Error('🚨 No VAA IDs found.');
 
-	if (vaaIds.length === 0) {
-		console.error('🚨 No VAA IDs found. Exiting.');
-		return;
-	}
+		// 2. Fetch VAA Data:
+		const vaaData = await fetchVaaData(vaaIds);
+		if (vaaData.length === 0) throw new Error('🚨 No VAA data found.');
 
-	// 2. Fetch VAA Data:
-	const vaaData = await fetchVaaData(vaaIds);
+		const vaaBytes = vaaData[0].vaaBytes;
+		if (!vaaBytes) throw new Error('🚨 VAA bytes are undefined.');
 
-	if (vaaData.length === 0) {
-		console.error('🚨 No VAA data found. Exiting.');
-		return;
-	}
+		// 3. Check VAA Validity:
+		const { valid } = await checkVaaValidity(vaaBytes);
+		if (valid) {
+			console.log('✅ VAA is already valid. No further action needed.');
+			return;
+		}
 
-	const vaaBytes = vaaData[0].vaaBytes;
+		console.log('⚠ VAA is not valid, proceeding with signature replacement...');
 
-	// 3. Check VAA Validity:
-	const { valid } = await checkVaaValidity(vaaBytes);
-
-	// If VAA is not valid:
-	if (!valid) {
 		// 4. Fetch Observations (VAA signatures):
-		const observations = await fetchObservations(vaaIds[0]); // Pass the first VAA ID
+		const observations = await fetchObservations(vaaIds[0]);
 
 		// 5. Fetch Current Guardian Set:
 		const [currentGuardians, guardianSetIndex] = await fetchGuardianSet();
-
-		if (!vaaBytes) {
-			console.error('🚨 Error: VAA bytes are undefined.');
-			return;
-		}
 
 		// 6. Replace Signatures:
 		const patchedVaa = await replaceSignatures(
@@ -52,7 +43,16 @@ async function main() {
 			currentGuardians,
 			guardianSetIndex
 		);
+
+		return patchedVaa;
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error(`❌ ${error.message}`);
+		} else {
+			console.error('❌ Unexpected error in main execution:', error);
+		}
+		process.exit(1);
 	}
 }
 
-main().catch(console.error);
+main();
