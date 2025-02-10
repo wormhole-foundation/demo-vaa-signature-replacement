@@ -5,6 +5,7 @@ import {
 	fetchObservations,
 	fetchGuardianSet,
 	replaceSignatures,
+	decodeResponse,
 } from './helpers';
 import { TXS } from './config';
 
@@ -37,14 +38,17 @@ async function main() {
 		const [currentGuardians, guardianSetIndex] = await fetchGuardianSet();
 
 		// 6. Replace Signatures:
-		const patchedVaa = await replaceSignatures(
+		const response = await replaceSignatures(
 			Buffer.from(vaaBytes, 'base64'),
 			observations,
 			currentGuardians,
 			guardianSetIndex
 		);
 
-		return patchedVaa;
+		// 7. Decode Response:
+		await decodeResponse(response);
+
+		return;
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error(`❌ ${error.message}`);
