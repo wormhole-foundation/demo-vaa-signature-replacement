@@ -72,6 +72,12 @@ Not enough valid replacement signatures! Need X, but only Y available.
 Exiting program...
 ```
 
+## Resources
+
+- [Wormhole Scan API Documentation](https://wormholescan.io/#/developers/api-doc)
+- [Wormhole Explorer](https://wormholescan.io/) 
+- [Understanding VAAs](https://wormhole.com/docs/learn/infrastructure/vaas/)
+
 ## Notes
 
 - This script does not modify VAAs on-chain; it only constructs a valid VAA that can be redeemed.
