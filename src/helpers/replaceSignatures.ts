@@ -22,7 +22,7 @@ export async function replaceSignatures(
 		const outdatedSigs = observations.filter((sig) => !currentGuardians.includes(sig.guardianAddr));
 
 		console.log(
-			`✅ Valid Signatures: ${validSigs.length} | ⚠️ Outdated Signatures: ${outdatedSigs.length}`
+			`✅ Valid Signatures: ${validSigs.length} | ⚠️  Outdated Signatures: ${outdatedSigs.length}`
 		);
 
 		if (validSigs.length === 0) throw new Error('No valid signatures found. Cannot proceed.');
@@ -63,7 +63,7 @@ export async function replaceSignatures(
 			)
 			.map((sig) => sig.guardianIndex);
 
-		console.log('⚠️ Outdated Guardian Indexes:', outdatedGuardianIndexes);
+		console.log('⚠️  Outdated Guardian Indexes:', outdatedGuardianIndexes);
 
 		// Step 6: Remove outdated signatures
 		let updatedSignatures = parsedVaa.signatures.filter(

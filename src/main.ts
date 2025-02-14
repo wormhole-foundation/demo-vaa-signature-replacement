@@ -29,7 +29,7 @@ async function main() {
 			return;
 		}
 
-		console.log('⚠ VAA is not valid, proceeding with signature replacement...');
+		console.log('⚠️  VAA is not valid, proceeding with signature replacement...');
 
 		// 4. Fetch Observations (VAA signatures):
 		const observations = await fetchObservations(vaaIds[0]);
