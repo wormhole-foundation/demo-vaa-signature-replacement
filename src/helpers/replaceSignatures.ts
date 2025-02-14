@@ -19,11 +19,6 @@ export async function replaceSignatures(
 
 		// Step 2: Separate valid and outdated signatures
 		const validSigs = observations.filter((sig) => currentGuardians.includes(sig.guardianAddr));
-		const outdatedSigs = observations.filter((sig) => !currentGuardians.includes(sig.guardianAddr));
-
-		console.log(
-			`✅ Valid Signatures: ${validSigs.length} | ⚠️  Outdated Signatures: ${outdatedSigs.length}`
-		);
 
 		if (validSigs.length === 0) throw new Error('No valid signatures found. Cannot proceed.');
 
@@ -32,21 +27,25 @@ export async function replaceSignatures(
 			.map((sig) => {
 				try {
 					const sigBuffer = Buffer.from(sig.signature, 'base64');
+					// If it's 130 bytes, it's hex-encoded and needs conversion
+					const sigBuffer1 =
+						sigBuffer.length === 130 ? Buffer.from(sigBuffer.toString(), 'hex') : sigBuffer;
+
+					const r = BigInt('0x' + sigBuffer1.subarray(0, 32).toString('hex'));
+					const s = BigInt('0x' + sigBuffer1.subarray(32, 64).toString('hex'));
+					const vRaw = sigBuffer1[64];
+					const v = vRaw < 27 ? vRaw : vRaw - 27;
 
 					return {
 						guardianIndex: currentGuardians.indexOf(sig.guardianAddr),
-						signature: new Signature(
-							BigInt('0x' + sigBuffer.subarray(0, 32).toString('hex')),
-							BigInt('0x' + sigBuffer.subarray(32, 64).toString('hex')),
-							sigBuffer[64]
-						),
+						signature: new Signature(r, s, v),
 					};
 				} catch (error) {
 					console.error(`❌ Failed to process signature for guardian: ${sig.guardianAddr}`, error);
 					return null;
 				}
 			})
-			.filter(Boolean); // Remove any failed conversions
+			.filter((sig): sig is { guardianIndex: number; signature: Signature } => sig !== null); // ✅ Remove null values
 
 		// Step 4: Deserialize the original VAA
 		let parsedVaa: VAA<'Uint8Array'>;
@@ -56,11 +55,9 @@ export async function replaceSignatures(
 			throw new Error(`Error deserializing VAA: ${error}`);
 		}
 
-		// Step 5: Identify outdated signatures
+		// Step 5: Identify outdated signatures in the VAA
 		const outdatedGuardianIndexes = parsedVaa.signatures
-			.filter(
-				(vaaSig) => !formattedSigs.some((sig: any) => sig.guardianIndex === vaaSig.guardianIndex)
-			)
+			.filter((vaaSig) => !formattedSigs.some((sig) => sig.guardianIndex === vaaSig.guardianIndex))
 			.map((sig) => sig.guardianIndex);
 
 		console.log('⚠️  Outdated Guardian Indexes:', outdatedGuardianIndexes);
@@ -70,27 +67,35 @@ export async function replaceSignatures(
 			(sig) => !outdatedGuardianIndexes.includes(sig.guardianIndex)
 		);
 
-		// Step 7: Pick a valid replacement signature
-		const validReplacement = formattedSigs.find(
-			(sig: any) =>
-				(sig.signature.v === 0 || sig.signature.v === 1) &&
-				!updatedSignatures.some((s) => s.guardianIndex === sig.guardianIndex)
+		// ✅ **Fix: Find the right replacements**
+		const validReplacements = formattedSigs.filter(
+			(sig) => !updatedSignatures.some((s) => s.guardianIndex === sig.guardianIndex)
 		);
 
-		if (!validReplacement)
-			throw new Error('No valid replacement signature found (must have v = 0 or 1).');
+		// 🚨 **NEW: Check if we have enough valid signatures to replace outdated ones**
+		if (outdatedGuardianIndexes.length > validReplacements.length) {
+			console.warn(
+				`🚨 Not enough valid replacement signatures! Need ${outdatedGuardianIndexes.length}, but only ${validReplacements.length} available.`
+			);
+			return;
+		}
 
-		updatedSignatures.push(validReplacement);
+		// ✅ Ensure replacements are added
+		updatedSignatures = [
+			...updatedSignatures,
+			...validReplacements.slice(0, outdatedGuardianIndexes.length),
+		];
 
-		// Step 8: Sort signatures
+		// Step 7: Sort signatures by guardian index
 		updatedSignatures.sort((a, b) => a.guardianIndex - b.guardianIndex);
 
-		// Step 9: Update and serialize VAA
+		// Step 8: Update and serialize VAA
 		const updatedVaa: VAA<'Uint8Array'> = {
 			...parsedVaa,
 			guardianSet: guardianSetIndex,
 			signatures: updatedSignatures,
 		};
+
 		let patchedVaa: Uint8Array;
 		try {
 			patchedVaa = serialize(updatedVaa);
@@ -98,13 +103,13 @@ export async function replaceSignatures(
 			throw new Error(`Error serializing updated VAA: ${error}`);
 		}
 
-		// Step 10: Send the updated VAA to RPC
+		// Step 9: Send the updated VAA to RPC
 		try {
 			if (!(patchedVaa instanceof Uint8Array)) throw new Error('Patched VAA is not a Uint8Array!');
 
 			const vaaHex = `0x${Buffer.from(patchedVaa).toString('hex')}`;
 
-			console.log('Sending updated VAA to RPC...');
+			console.log('📡 Sending updated VAA to RPC...');
 
 			const result = await axios.post(RPC, {
 				jsonrpc: '2.0',
@@ -120,11 +125,7 @@ export async function replaceSignatures(
 				],
 			});
 
-			const rpcResponse = JSON.stringify(result.data, null, 2);
 			const verificationResult = result.data.result;
-			// console.log(`Updated VAA: 0x${Buffer.from(patchedVaa).toString('hex')}`);
-			// console.log('📡 Full RPC Response:', JSON.stringify(result.data, null, 2));
-			// console.log(`Verification Result: ${result.data.result}`);
 			return verificationResult;
 		} catch (error) {
 			throw new Error(`Error sending updated VAA to RPC: ${error}`);
