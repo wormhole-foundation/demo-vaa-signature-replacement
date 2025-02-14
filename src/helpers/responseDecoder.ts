@@ -8,7 +8,6 @@ export async function decodeResponse(rawResponse: string) {
 		// Decode the response
 		const decoded = web3.eth.abi.decodeParameters(OUTPUT_TYPES, rawResponse);
 
-		console.log('Decoded Response:', decoded);
 		console.log('Verification Result:', decoded.valid);
 		console.log(
 			'\n --------------------------------------------------------------------------------------------------------'
