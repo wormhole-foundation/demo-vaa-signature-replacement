@@ -45,6 +45,10 @@ async function main() {
 			guardianSetIndex
 		);
 
+		if (!response) {
+			return;
+		}
+
 		// 7. Decode Response:
 		await decodeResponse(response);
 
