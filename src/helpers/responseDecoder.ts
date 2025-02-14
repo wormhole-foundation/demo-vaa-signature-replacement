@@ -10,6 +10,9 @@ export async function decodeResponse(rawResponse: string) {
 
 		console.log('Decoded Response:', decoded);
 		console.log('Verification Result:', decoded.valid);
+		console.log(
+			'\n --------------------------------------------------------------------------------------------------------'
+		);
 
 		// Log failure reason only if valid is false
 		if (decoded.valid === false) {
