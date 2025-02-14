@@ -11,48 +11,43 @@ import { TXS } from './config';
 
 async function main() {
 	try {
-		// 1. Fetch Transaction VAA IDs:
-		const vaaIds = await fetchVaaIds(TXS);
-		if (vaaIds.length === 0) throw new Error('🚨 No VAA IDs found.');
+		for (const tx of TXS) {
+			console.log('\nProcessing TSX: ', tx);
 
-		// 2. Fetch VAA Data:
-		const vaaData = await fetchVaaData(vaaIds);
-		if (vaaData.length === 0) throw new Error('🚨 No VAA data found.');
+			// 1. Fetch Transaction VAA IDs:
+			const vaaIds = await fetchVaaIds([tx]);
+			if (vaaIds.length === 0) continue;
 
-		const vaaBytes = vaaData[0].vaaBytes;
-		if (!vaaBytes) throw new Error('🚨 VAA bytes are undefined.');
+			// 2. Fetch VAA Data:
+			const vaaData = await fetchVaaData(vaaIds);
+			if (vaaData.length === 0) continue;
 
-		// 3. Check VAA Validity:
-		const { valid } = await checkVaaValidity(vaaBytes);
-		if (valid) {
-			console.log('✅ VAA is already valid. No further action needed.');
-			return;
+			const vaaBytes = vaaData[0].vaaBytes;
+			if (!vaaBytes) continue;
+
+			// 3. Check VAA Validity:
+			const { valid } = await checkVaaValidity(vaaBytes);
+			if (valid) continue;
+
+			// 4. Fetch Observations (VAA signatures):
+			const observations = await fetchObservations(vaaIds[0]);
+
+			// 5. Fetch Current Guardian Set:
+			const [currentGuardians, guardianSetIndex] = await fetchGuardianSet();
+
+			// 6. Replace Signatures:
+			const response = await replaceSignatures(
+				Buffer.from(vaaBytes, 'base64'),
+				observations,
+				currentGuardians,
+				guardianSetIndex
+			);
+
+			if (!response) continue;
+
+			// 7. Decode Response:
+			await decodeResponse(response);
 		}
-
-		console.log('⚠️  VAA is not valid, proceeding with signature replacement...');
-
-		// 4. Fetch Observations (VAA signatures):
-		const observations = await fetchObservations(vaaIds[0]);
-
-		// 5. Fetch Current Guardian Set:
-		const [currentGuardians, guardianSetIndex] = await fetchGuardianSet();
-
-		// 6. Replace Signatures:
-		const response = await replaceSignatures(
-			Buffer.from(vaaBytes, 'base64'),
-			observations,
-			currentGuardians,
-			guardianSetIndex
-		);
-
-		if (!response) {
-			return;
-		}
-
-		// 7. Decode Response:
-		await decodeResponse(response);
-
-		return;
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error(`❌ ${error.message}`);
