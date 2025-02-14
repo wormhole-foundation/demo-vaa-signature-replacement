@@ -126,7 +126,7 @@ export async function replaceSignatures(
 			});
 
 			const verificationResult = result.data.result;
-			console.log('Hex VAA: ', vaaHex);
+			console.log('Updated VAA (hex):', vaaHex);
 			return verificationResult;
 		} catch (error) {
 			throw new Error(`Error sending updated VAA to RPC: ${error}`);
