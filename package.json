@@ -4,21 +4,22 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "npx tsx src/main.ts"
+		"start": "npx tsx src/main.ts",
+		"tx:receipt": "npx tsx src/scripts/txReceipt.ts"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"description": "",
 	"devDependencies": {
-		"@types/node": "^22.13.1",
-		"eslint": "^9.19.0",
-		"prettier": "^3.4.2",
+		"@types/node": "22.13.4",
+		"eslint": "9.20.1",
+		"prettier": "3.5.1",
 		"tsx": "^4.19.2",
 		"typescript": "^5.7.3"
 	},
 	"dependencies": {
-		"@wormhole-foundation/sdk": "1.5.2",
+		"@wormhole-foundation/sdk": "1.9.0",
 		"axios": "^1.5.1",
 		"web3": "4.16.0"
 	}
