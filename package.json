@@ -5,7 +5,8 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"vaa:replace-signatures": "npx tsx src/scripts/replaceSignatures.ts",
-		"vaa:tx-receipt": "npx tsx src/scripts/txReceipt.ts"
+		"vaa:tx-receipt": "npx tsx src/scripts/txReceipt.ts",
+		"vaa:bytes": "npx tsx src/scripts/vaaBytes.ts"
 	},
 	"keywords": [],
 	"author": "",
