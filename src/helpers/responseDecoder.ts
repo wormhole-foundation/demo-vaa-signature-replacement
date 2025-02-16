@@ -9,9 +9,6 @@ export async function decodeResponse(rawResponse: string) {
 		const decoded = web3.eth.abi.decodeParameters(OUTPUT_TYPES, rawResponse);
 
 		console.log('Verification Result:', decoded.valid);
-		console.log(
-			'\n --------------------------------------------------------------------------------------------------------'
-		);
 
 		// Log failure reason only if valid is false
 		if (decoded.valid === false) {
