@@ -1,30 +1,28 @@
-import axios from 'axios';
+import { fetchVaaIds } from '../helpers';
 import { TXS } from '../config';
-import { RPC, CORE, LOG_MESSAGE_PUBLISHED_TOPIC } from '../config';
 
-async function fetchVaaIds() {
-	const vaaIds = [];
-	for (const tx of TXS) {
-		const result = (
-			await axios.post(RPC, {
-				jsonrpc: '2.0',
-				id: 1,
-				method: 'eth_getTransactionReceipt',
-				params: [tx],
-			})
-		)?.data?.result;
-		if (!result) {
-			console.error(`❌ ${tx} - Unable to fetch transaction receipt`);
-			continue;
+async function main() {
+	try {
+		for (const tx of TXS) {
+			console.log(
+				'\n --------------------------------------------------------------------------------------------------------'
+			);
+			console.log(`\nProcessing TX: ${tx}\n`);
+
+			// 1. Fetch Transaction VAA IDs:
+			const vaaIds = await fetchVaaIds([tx]);
+			if (vaaIds.length === 0 || !vaaIds) continue;
+
+			console.log(`Transaction ID: ${vaaIds[0]}`);
 		}
-		for (const log of result.logs) {
-			if (log.address === CORE && log.topics?.[0] === LOG_MESSAGE_PUBLISHED_TOPIC) {
-				const emitter = log.topics[1].substring(2);
-				const seq = BigInt(log.data.substring(0, 66)).toString();
-				console.log(`${tx} - 2/${emitter}/${seq}`);
-			}
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error(`❌ ${error.message}`);
+		} else {
+			console.error('❌ Unexpected error in main execution:', error);
 		}
+		process.exit(1);
 	}
 }
 
-fetchVaaIds();
+main();
