@@ -25,11 +25,11 @@ export async function fetchVaaIds(txHashes: string[]): Promise<string[]> {
 					vaaIds.push(`2/${emitter}/${seq}`);
 				}
 			}
+			console.log('VAA IDs: ', vaaIds);
 		} catch (error) {
 			console.error(`Error processing ${tx}:`, error);
 		}
 	}
 
-	console.log('VAA IDs: ', vaaIds);
 	return vaaIds;
 }
