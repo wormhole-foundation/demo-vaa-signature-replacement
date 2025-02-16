@@ -10,7 +10,6 @@ export async function fetchVaaData(vaaIds: string[]): Promise<{ id: string; vaaB
 			const response = await axios.get(`${WORMHOLE_SCAN_API}/signed_vaa/${id}`);
 			const vaaBytes = response.data.vaaBytes;
 			results.push({ id, vaaBytes });
-			console.log(`✅ Fetched VAA Data for ${id}`);
 		} catch (error) {
 			console.error(`❌ Error fetching VAA for ${id}:`, error);
 		}
