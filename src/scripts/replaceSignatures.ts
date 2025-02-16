@@ -6,17 +6,20 @@ import {
 	fetchGuardianSet,
 	replaceSignatures,
 	decodeResponse,
-} from './helpers';
-import { TXS } from './config';
+} from '../helpers';
+import { TXS } from '../config';
 
 async function main() {
 	try {
 		for (const tx of TXS) {
-			console.log('\nProcessing TSX: ', tx);
+			console.log(
+				'\n --------------------------------------------------------------------------------------------------------'
+			);
+			console.log(`\nProcessing TSX: ${tx}\n`);
 
 			// 1. Fetch Transaction VAA IDs:
 			const vaaIds = await fetchVaaIds([tx]);
-			if (vaaIds.length === 0) continue;
+			if (vaaIds.length === 0 || !vaaIds) continue;
 
 			// 2. Fetch VAA Data:
 			const vaaData = await fetchVaaData(vaaIds);
