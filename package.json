@@ -4,8 +4,8 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "npx tsx src/main.ts",
-		"tx:receipt": "npx tsx src/scripts/txReceipt.ts"
+		"vaa:replace-signatures": "npx tsx src/scripts/replaceSignatures.ts",
+		"vaa:tx-receipt": "npx tsx src/scripts/txReceipt.ts"
 	},
 	"keywords": [],
 	"author": "",
