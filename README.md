@@ -105,55 +105,55 @@ export const SOL_TXS = [
 
 1. **Check VAA Signatures & Replace Invalid Ones** - verifies if a VAA’s signatures are valid. If invalid, replaces outdated signatures and constructs a valid VAA
 
-```bash
-npm run vaa:replace-signatures
-```
-
-If the script successfully replaces outdated signatures and the VAA is valid, the RPC response will return:
-
-```bash
-✅ Verification Result: true
-```
-
-If the VAA is still invalid, the RPC response will return:
-
-```bash
-❌ Verification Result: false
-```
-
-If the number of outdated signatures is greater than the number of available valid signatures for replacement, the script will exit early, logging a warning:
-
-```bash
-Not enough valid replacement signatures! Need X, but only Y available.
-Exiting program...
-```
+	```bash
+	npm run vaa:replace-signatures
+	```
+	
+	If the script successfully replaces outdated signatures and the VAA is valid, the RPC response will return:
+	
+	```bash
+	✅ Verification Result: true
+	```
+	
+	If the VAA is still invalid, the RPC response will return:
+	
+	```bash
+	❌ Verification Result: false
+	```
+	
+	If the number of outdated signatures is greater than the number of available valid signatures for replacement, the script will exit early, logging a warning:
+	
+	```bash
+	Not enough valid replacement signatures! Need X, but only Y available.
+	Exiting program...
+	```
 
 2. **Fetch VAA IDs** - extracts VAA IDs from a list of Ethereum transaction hashes
 
-```bash
-npm run vaa:tx-ids
-```
+	```bash
+	npm run vaa:tx-ids
+	```
 
 3. **Convert VAA to Bytes** - fetches a VAA from WormholeScan and converts it to byte format
 
-```bash
-npm run vaa:bytes
-```
+	```bash
+	npm run vaa:bytes
+	```
 
 4. **Check VAA Redemption Status** - verifies whether a VAA has been redeemed or not. Returns `true` (redeemed) or `false` (not redeemed). Supports only Ethereum ↔ Solana transactions on Mainnet
 
-Before running the redemption script, users must manually input the source and destination chain inside the script.
+	Before running the redemption script, users must manually input the source and destination chain inside the script.
 
-```typescript
-const srcChain: ChainType = 'Ethereum'; // or 'Solana'
-const destChain: ChainType = 'Solana'; // or 'Ethereum'
-```
+	```typescript
+	const srcChain: ChainType = 'Ethereum'; // or 'Solana'
+	const destChain: ChainType = 'Solana'; // or 'Ethereum'
+	```
 
-Then, run:
-
-```bash
-npm run vaa:redeem-status
-```
+	Then, run:
+	
+	```bash
+	npm run vaa:redeem-status
+	```
 
 ## Resources
 
