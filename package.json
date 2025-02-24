@@ -1,0 +1,28 @@
+{
+	"name": "wormhole-scan-api-demo",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"vaa:replace-signatures": "npx tsx src/scripts/replaceSignatures.ts",
+		"vaa:tx-ids": "npx tsx src/scripts/txReceipt.ts",
+		"vaa:bytes": "npx tsx src/scripts/vaaBytes.ts",
+		"vaa:redeem-status": "npx tsx src/scripts/checkRedeem.ts"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"devDependencies": {
+		"@types/node": "22.13.4",
+		"eslint": "9.20.1",
+		"prettier": "3.5.1",
+		"tsx": "^4.19.2",
+		"typescript": "^5.7.3"
+	},
+	"dependencies": {
+		"@wormhole-foundation/sdk": "1.9.0",
+		"axios": "^1.5.1",
+		"web3": "4.16.0"
+	}
+}
