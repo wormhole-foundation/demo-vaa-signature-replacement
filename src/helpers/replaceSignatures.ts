@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { deserialize, serialize, VAA, Signature } from '@wormhole-foundation/sdk';
 import { eth } from 'web3';
-import { RPC, CORE, PARSE_AND_VERIFY_VM_ABI } from '../config';
+import { RPC, ETH_CORE, PARSE_AND_VERIFY_VM_ABI } from '../config';
 
 export async function replaceSignatures(
 	vaa: string | Uint8Array<ArrayBufferLike>,
@@ -118,7 +118,7 @@ export async function replaceSignatures(
 				params: [
 					{
 						from: null,
-						to: CORE,
+						to: ETH_CORE,
 						data: eth.abi.encodeFunctionCall(PARSE_AND_VERIFY_VM_ABI, [vaaHex]),
 					},
 					'latest',

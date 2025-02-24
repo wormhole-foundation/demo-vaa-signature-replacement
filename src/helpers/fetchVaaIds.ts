@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {
 	RPC,
-	CORE,
+	ETH_CORE,
 	LOG_MESSAGE_PUBLISHED_TOPIC,
 	RPC_SOL,
 	SOL_EMITTER_ADDRESS,
@@ -25,7 +25,7 @@ export async function fetchVaaIds(txHashes: string[]): Promise<string[]> {
 			if (!result) throw new Error(`Unable to fetch transaction receipt for ${tx}`);
 
 			for (const log of result.logs) {
-				if (log.address === CORE && log.topics?.[0] === LOG_MESSAGE_PUBLISHED_TOPIC) {
+				if (log.address === ETH_CORE && log.topics?.[0] === LOG_MESSAGE_PUBLISHED_TOPIC) {
 					const emitter = log.topics[1].substring(2);
 					const seq = BigInt(log.data.substring(0, 66)).toString();
 					vaaIds.push(`2/${emitter}/${seq}`);

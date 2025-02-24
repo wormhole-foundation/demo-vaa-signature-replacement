@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { eth } from 'web3';
-import { RPC, CORE, PARSE_AND_VERIFY_VM_ABI } from '../config';
+import { RPC, ETH_CORE, PARSE_AND_VERIFY_VM_ABI } from '../config';
 
 // ✅ Function to check if VAA is valid
 export async function checkVaaValidity(vaaBytes: string) {
@@ -16,7 +16,7 @@ export async function checkVaaValidity(vaaBytes: string) {
 				params: [
 					{
 						from: null,
-						to: CORE,
+						to: ETH_CORE,
 						data: eth.abi.encodeFunctionCall(PARSE_AND_VERIFY_VM_ABI, [`0x${vaa.toString('hex')}`]),
 					},
 					'latest',

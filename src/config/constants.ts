@@ -3,7 +3,7 @@ export const RPC = 'https://ethereum-rpc.publicnode.com';
 export const RPC_SOL = 'https://solana-rpc.publicnode.com';
 
 // Wormhole Core contracts:
-export const CORE = '0x98f3c9e6E3fAce36bAAd05FE09d375Ef1464288B'.toLowerCase();
+export const ETH_CORE = '0x98f3c9e6E3fAce36bAAd05FE09d375Ef1464288B'.toLowerCase();
 
 // Solana Emitter Address:
 export const SOL_EMITTER_ADDRESS =
