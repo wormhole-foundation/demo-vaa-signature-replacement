@@ -5,7 +5,9 @@ export const RPC_SOL = 'https://solana-rpc.publicnode.com';
 // Wormhole Core contracts:
 export const ETH_CORE = '0x98f3c9e6E3fAce36bAAd05FE09d375Ef1464288B'.toLowerCase();
 
-// Solana Emitter Address:
+// Solana Emitter Address - This is the unique identifier for the program that  
+// emitted the Wormhole message. It is not the Wormhole Program ID but a derived  
+// address specific to the sending program. It is used to construct the VAA ID.
 export const SOL_EMITTER_ADDRESS =
 	'ec7372995d5cc8732397fb0ad35c0121e0eaa90d26f828a534cab54391b3a4f5';
 export const LOG_MESSAGE_PUBLISHED_TOPIC =
